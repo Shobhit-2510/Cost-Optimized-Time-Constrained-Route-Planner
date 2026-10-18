@@ -35,7 +35,7 @@ export default function AIPanel({
       const res = await fetch("/api/ai/parse", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query }),
+        body: JSON.stringify({ query, nodes }),
       });
       const data = await res.json();
 

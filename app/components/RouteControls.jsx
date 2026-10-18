@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useRef } from "react";
 import { Button, Input, Select, Textarea, Badge } from "./ui";
-import { NATIONAL_HIGHWAY_NODES } from "@/app/lib/nationalHighways";
+import DistrictCombobox from "./DistrictCombobox";
 import {
   Compass,
   Network,
@@ -20,6 +20,7 @@ import {
   Download,
   RefreshCw,
   Search,
+  ArrowUpDown,
 } from "lucide-react";
 
 const ALGORITHMS = [
@@ -68,28 +69,6 @@ export default function RouteControls({
   const [csvStatus, setCsvStatus] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef(null);
-  const [districtFilter, setDistrictFilter] = useState("");
-
-  // Filter nodes by query if provided
-  const filteredNodes = useMemo(() => {
-    if (!districtFilter.trim()) return nodes;
-    const q = districtFilter.toLowerCase().trim();
-    return nodes.filter(
-      (n) =>
-        (n.name && n.name.toLowerCase().includes(q)) ||
-        (n.state && n.state.toLowerCase().includes(q))
-    );
-  }, [nodes, districtFilter]);
-
-  // Group nodes by state for clean hierarchical dropdown
-  const groupedNodes = useMemo(() => {
-    return filteredNodes.reduce((acc, node) => {
-      const st = node.state || "National Interchanges";
-      if (!acc[st]) acc[st] = [];
-      acc[st].push(node);
-      return acc;
-    }, {});
-  }, [filteredNodes]);
 
   async function handleSolve() {
     onSolve &&
@@ -248,62 +227,41 @@ export default function RouteControls({
       {section === "route" && (
         <div className="space-y-4">
           <div className="space-y-3">
-            {/* Quick District Search Filter */}
-            <div className="relative">
-              <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-[#141418] border border-[#232328] rounded-md focus-within:border-blue-500/50 transition-colors">
-                <Search className="h-3.5 w-3.5 text-neutral-400 shrink-0" />
-                <input
-                  type="text"
-                  placeholder={`Search ${nodes.length} districts across India...`}
-                  value={districtFilter}
-                  onChange={(e) => setDistrictFilter(e.target.value)}
-                  className="w-full bg-transparent text-xs text-neutral-100 placeholder:text-neutral-500 focus:outline-none"
-                />
-                {districtFilter && (
-                  <button
-                    type="button"
-                    onClick={() => setDistrictFilter("")}
-                    className="text-[11px] text-neutral-400 hover:text-neutral-200 px-1"
-                  >
-                    Clear
-                  </button>
-                )}
-              </div>
+            <DistrictCombobox
+              label="Origin City / District"
+              value={selectedSource}
+              onChange={onSourceChange}
+              nodes={nodes}
+              placeholder="Search origin (e.g. Pune, Delhi, Srinagar)..."
+              accentColor="emerald"
+            />
+
+            <div className="flex items-center justify-between -my-1">
+              <div className="h-[1px] bg-[#232328] flex-1" />
+              <button
+                type="button"
+                onClick={() => {
+                  const temp = selectedSource;
+                  onSourceChange && onSourceChange(selectedDest);
+                  onDestChange && onDestChange(temp);
+                }}
+                className="px-2 py-0.5 rounded bg-[#16161b] border border-[#262630] text-neutral-400 hover:text-neutral-100 hover:bg-[#1f1f28] transition-colors mx-2 flex items-center gap-1.5 text-[10px] font-medium"
+                title="Swap Origin and Destination"
+              >
+                <ArrowUpDown className="h-3 w-3" />
+                <span>Swap</span>
+              </button>
+              <div className="h-[1px] bg-[#232328] flex-1" />
             </div>
 
-            <Select
-              label="Origin City / District"
-              value={selectedSource ?? ""}
-              onChange={(e) => onSourceChange(e.target.value === "" ? null : Number(e.target.value))}
-            >
-              <option value="">Select origin hub...</option>
-              {Object.entries(groupedNodes).map(([state, cityList]) => (
-                <optgroup key={state} label={state} className="bg-[#141418] text-neutral-400 font-semibold">
-                  {cityList.map((n) => (
-                    <option key={n.id} value={n.id} className="text-neutral-100 font-normal">
-                      {n.name} (Toll: ₹{n.fee})
-                    </option>
-                  ))}
-                </optgroup>
-              ))}
-            </Select>
-
-            <Select
-              label="Destination City / Interchange"
-              value={selectedDest ?? ""}
-              onChange={(e) => onDestChange(e.target.value === "" ? null : Number(e.target.value))}
-            >
-              <option value="">Select destination hub...</option>
-              {Object.entries(groupedNodes).map(([state, cityList]) => (
-                <optgroup key={state} label={state} className="bg-[#141418] text-neutral-400 font-semibold">
-                  {cityList.map((n) => (
-                    <option key={n.id} value={n.id} className="text-neutral-100 font-normal">
-                      {n.name} (Toll: ₹{n.fee})
-                    </option>
-                  ))}
-                </optgroup>
-              ))}
-            </Select>
+            <DistrictCombobox
+              label="Destination City / District"
+              value={selectedDest}
+              onChange={onDestChange}
+              nodes={nodes}
+              placeholder="Search destination (e.g. Bangalore, Varanasi)..."
+              accentColor="blue"
+            />
           </div>
 
           {/* Explicit Optimization Objective Selector */}
@@ -626,27 +584,23 @@ export default function RouteControls({
           {/* ── MANUAL SEGMENT ── */}
           {topologySubTab === "manual" && (
             <div className="space-y-3 animate-fade-in">
-              <Select
+              <DistrictCombobox
                 label="Origin Node"
                 value={edgeSrc}
-                onChange={(e) => setEdgeSrc(e.target.value)}
-              >
-                <option value="">Select origin...</option>
-                {nodes.map((n) => (
-                  <option key={n.id} value={n.id}>{n.name} ({n.state})</option>
-                ))}
-              </Select>
+                onChange={(val) => setEdgeSrc(val ?? "")}
+                nodes={nodes}
+                placeholder="Search origin district..."
+                accentColor="emerald"
+              />
 
-              <Select
+              <DistrictCombobox
                 label="Target Node"
                 value={edgeDest}
-                onChange={(e) => setEdgeDest(e.target.value)}
-              >
-                <option value="">Select target...</option>
-                {nodes.map((n) => (
-                  <option key={n.id} value={n.id}>{n.name} ({n.state})</option>
-                ))}
-              </Select>
+                onChange={(val) => setEdgeDest(val ?? "")}
+                nodes={nodes}
+                placeholder="Search target district..."
+                accentColor="blue"
+              />
 
               <Input
                 label="Segment Travel Time (Minutes)"

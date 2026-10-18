@@ -37,7 +37,7 @@ export default function Home() {
   const [result, setResult] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [loadError, setLoadError] = useState("");
-
+  const [currentAlgo, setCurrentAlgo] = useState("dijkstra");
 
   // UI state
   const [activePanel, setActivePanel] = useState("ai");
@@ -89,12 +89,22 @@ export default function Home() {
 
   // Solve route
   const handleSolve = useCallback(
-    async ({ algorithm, optimizeFor = "time", maxTime = 99999, maxCost = 99999 }) => {
-      if (selectedSource === null || selectedDest === null) {
+    async ({
+      algorithm = "dijkstra",
+      optimizeFor = "time",
+      maxTime = 99999,
+      maxCost = 99999,
+      sourceId,
+      destId,
+    } = {}) => {
+      const src = sourceId !== undefined && sourceId !== null ? Number(sourceId) : selectedSource;
+      const dst = destId !== undefined && destId !== null ? Number(destId) : selectedDest;
+
+      if (src === null || dst === null || src === undefined || dst === undefined) {
         showNotification("Specify both origin and destination vertices", "error");
         return;
       }
-      if (selectedSource === selectedDest) {
+      if (src === dst) {
         showNotification("Origin and destination must be distinct", "error");
         return;
       }
@@ -109,8 +119,8 @@ export default function Home() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            sourceId: selectedSource,
-            destId: selectedDest,
+            sourceId: src,
+            destId: dst,
             optimizeFor,
             maxTime,
             maxCost,
@@ -212,12 +222,30 @@ export default function Home() {
     }
   }, []);
 
-  // Handle AI route extraction
-  const handleAIRoute = useCallback((parsed) => {
-    if (parsed.sourceId !== undefined) setSelectedSource(parsed.sourceId);
-    if (parsed.destId !== undefined) setSelectedDest(parsed.destId);
-    showNotification(`Identified: ${parsed.sourceName} → ${parsed.destName}`, "info");
-  }, []);
+  // Handle AI route extraction and auto-solve
+  const handleAIRoute = useCallback(
+    (parsed) => {
+      const src = parsed.sourceId !== undefined && parsed.sourceId !== null ? Number(parsed.sourceId) : null;
+      const dst = parsed.destId !== undefined && parsed.destId !== null ? Number(parsed.destId) : null;
+
+      if (src !== null) setSelectedSource(src);
+      if (dst !== null) setSelectedDest(dst);
+
+      showNotification(`Identified: ${parsed.sourceName} → ${parsed.destName}`, "info");
+
+      if (src !== null && dst !== null && src !== dst) {
+        handleSolve({
+          sourceId: src,
+          destId: dst,
+          algorithm: parsed.algorithm || (parsed.optimizeFor === "cost" ? "dijkstra" : "astar"),
+          optimizeFor: parsed.optimizeFor || "cost",
+          maxTime: parsed.maxTime || 99999,
+          maxCost: parsed.maxCost || 99999,
+        });
+      }
+    },
+    [handleSolve]
+  );
 
 
   // Node click handler
