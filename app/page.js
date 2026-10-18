@@ -10,7 +10,6 @@ import AIPanel from "@/app/components/AIPanel";
 import {
   Navigation,
   Map as MapIcon,
-  Network,
   Activity,
   Sparkles,
   Database,
@@ -22,12 +21,6 @@ import {
 
 // Lazy load heavy components
 const MapView = lazy(() => import("@/app/components/MapView"));
-const GraphView = lazy(() => import("@/app/components/GraphView"));
-
-const VIEW_TABS = [
-  { id: "map", label: "Geographic Map", icon: MapIcon },
-  { id: "graph", label: "Topological Graph", icon: Network },
-];
 
 const PANEL_TABS = [
   { id: "ai", label: "Intelligence", icon: Sparkles },
@@ -54,7 +47,6 @@ export default function Home() {
   const [currentAlgo, setCurrentAlgo] = useState("dijkstra");
 
   // UI state
-  const [activeView, setActiveView] = useState("map");
   const [activePanel, setActivePanel] = useState("ai");
   const [notification, setNotification] = useState(null);
 
@@ -336,23 +328,28 @@ export default function Home() {
             <div className="rounded bg-[#141418] border border-[#232328] p-2.5 flex items-start gap-2 text-[11px] text-neutral-400 leading-relaxed">
               <Info className="h-3.5 w-3.5 shrink-0 text-neutral-400 mt-0.5" />
               <span>
-                Click any city on the map or network graph to toggle origin and destination.
+                Click any district hub on the map to toggle origin and destination.
               </span>
             </div>
           </div>
         </aside>
 
-        {/* Center Canvas: Map / Network Graph */}
+        {/* Center Canvas: Geographic Highway Map */}
         <main className="flex-1 flex flex-col overflow-hidden bg-[#0a0a0d]">
-          {/* View Tab Selector */}
-          <div className="p-2.5 border-b border-[#232328] bg-[#0e0e11]/80 flex items-center justify-between">
-            <Tabs tabs={VIEW_TABS} active={activeView} onChange={setActiveView} className="max-w-xs" />
-            <div className="text-[11px] font-mono text-neutral-400 pr-2">
-              {nodes.length} Vertices • {displayEdges.length} Directed Segments
+          {/* Map Header Bar */}
+          <div className="px-4 py-2.5 border-b border-[#232328] bg-[#0e0e11]/80 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <MapIcon className="h-3.5 w-3.5 text-blue-400" />
+              <span className="text-xs font-semibold uppercase tracking-wider text-neutral-200">
+                Geographic Highway Route Map
+              </span>
+            </div>
+            <div className="text-[11px] font-mono text-neutral-400">
+              {nodes.length} Districts • {displayEdges.length} Highway Segments
             </div>
           </div>
 
-          {/* Interactive Visualizer Canvas */}
+          {/* Interactive Map Canvas */}
           <div className="flex-1 p-3 overflow-hidden">
             <Suspense
               fallback={
@@ -364,26 +361,14 @@ export default function Home() {
                 </div>
               }
             >
-              {activeView === "map" ? (
-                <MapView
-                  nodes={nodes}
-                  edges={displayEdges}
-                  solutionPath={solutionPath}
-                  selectedSource={selectedSource}
-                  selectedDest={selectedDest}
-                  onNodeClick={handleNodeClick}
-                />
-              ) : (
-                <GraphView
-                  nodes={nodes}
-                  edges={displayEdges}
-                  solutionPath={solutionPath}
-                  selectedSource={selectedSource}
-                  selectedDest={selectedDest}
-                  visitedNodes={vizVisited}
-                  onNodeClick={handleNodeClick}
-                />
-              )}
+              <MapView
+                nodes={nodes}
+                edges={displayEdges}
+                solutionPath={solutionPath}
+                selectedSource={selectedSource}
+                selectedDest={selectedDest}
+                onNodeClick={handleNodeClick}
+              />
             </Suspense>
           </div>
 

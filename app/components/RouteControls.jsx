@@ -239,8 +239,8 @@ export default function RouteControls({
               : "text-neutral-400 hover:text-neutral-200"
           }`}
         >
-          <Network className="h-3.5 w-3.5" />
-          <span>Topology</span>
+          <Database className="h-3.5 w-3.5" />
+          <span>Network Data</span>
         </button>
       </div>
 
