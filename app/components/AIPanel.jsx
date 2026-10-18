@@ -200,7 +200,7 @@ export default function AIPanel({
       {routeResult && (
         <div className="space-y-2.5 pt-2 border-t border-[#202026]">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400">
+            <span className="hidden lg:inline text-[10px] font-semibold uppercase tracking-wider text-neutral-400">
               Intelligence Brief
             </span>
           </div>

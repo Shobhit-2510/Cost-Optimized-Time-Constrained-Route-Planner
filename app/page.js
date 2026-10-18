@@ -15,6 +15,8 @@ import {
   CheckCircle2,
   AlertCircle,
   AlertTriangle,
+  Menu,
+  X,
 } from "lucide-react";
 
 // Lazy load heavy components
@@ -42,6 +44,8 @@ export default function Home() {
   // UI state
   const [activePanel, setActivePanel] = useState("ai");
   const [notification, setNotification] = useState(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileSection, setMobileSection] = useState("intelligence");
 
   useEffect(() => {
     fetchEdges();
@@ -271,13 +275,13 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col bg-[#09090b] text-neutral-100 font-sans selection:bg-neutral-800 selection:text-white">
       {/* Classic Navbar */}
-      <header className="h-13 border-b border-[#232328] bg-[#0f0f12] px-5 flex items-center justify-between sticky top-0 z-50">
-        <div className="flex items-center gap-3">
+      <header className="min-h-13 border-b border-[#232328] bg-[#0f0f12] px-3 sm:px-5 py-2 flex items-center justify-between gap-3 sticky top-0 z-50">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <div className="h-7 w-7 rounded bg-[#1c1c22] border border-[#2e2e38] flex items-center justify-center text-neutral-200">
             <Navigation className="h-4 w-4" />
           </div>
-          <div className="flex items-baseline gap-2.5">
-            <h1 className="text-sm font-semibold tracking-tight text-neutral-100">
+          <div className="flex items-baseline gap-2.5 min-w-0">
+            <h1 className="text-sm font-semibold tracking-tight text-neutral-100 truncate">
               Smart Route Planner
             </h1>
             <span className="text-[11px] text-neutral-400 font-mono hidden sm:inline">
@@ -286,12 +290,91 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Badge variant="indigo">Gemini 3.8</Badge>
-          <Badge variant="default">Leaflet Engine</Badge>
-          <Badge variant="default">Atlas Cluster</Badge>
+        <div className="flex items-center gap-1.5 shrink-0">
+          <Badge variant="indigo" className="hidden sm:inline-flex">Gemini 3.8</Badge>
+          <Badge variant="default" className="hidden md:inline-flex">Leaflet Engine</Badge>
+          <Badge variant="default" className="hidden lg:inline-flex">Atlas Cluster</Badge>
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen((open) => !open)}
+            className="lg:hidden p-1.5 rounded text-neutral-300 hover:bg-[#25252b] hover:text-white"
+            aria-label="Open navigation menu"
+            aria-expanded={mobileMenuOpen}
+          >
+            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
         </div>
       </header>
+
+      {mobileMenuOpen && (
+        <div className="lg:hidden fixed top-[52px] right-3 z-50 w-56 rounded-md border border-[#2b2b34] bg-[#121216] p-1.5 shadow-2xl">
+          <button
+            type="button"
+            onClick={() => {
+              setMobileSection("find-route");
+              setMobileMenuOpen(false);
+            }}
+            className="w-full rounded px-3 py-2 text-left text-xs text-neutral-300 hover:bg-[#202026]"
+          >
+            Find Route
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setActivePanel("edges");
+              setMobileSection("network-matrix");
+              setMobileMenuOpen(false);
+            }}
+            className="w-full rounded px-3 py-2 text-left text-xs text-neutral-300 hover:bg-[#202026]"
+          >
+            Network Matrix
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setMobileSection("network-data");
+              setMobileMenuOpen(false);
+            }}
+            className="w-full rounded px-3 py-2 text-left text-xs text-neutral-300 hover:bg-[#202026]"
+          >
+            Network Data
+          </button>
+        </div>
+      )}
+
+      {mobileSection === "network-matrix" && (
+        <div className="lg:hidden p-3.5 border-b border-[#232328] bg-[#0e0e11]">
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400">
+                Active Topology Matrix
+              </span>
+              <Badge variant="default">{dbEdges.length} records</Badge>
+            </div>
+            {dbEdges.length === 0 ? (
+              <div className="text-center py-8 text-neutral-400 text-xs">
+                <Database className="h-6 w-6 mx-auto mb-2 opacity-40" />
+                <p>Database collection empty</p>
+              </div>
+            ) : (
+              <div className="space-y-1 max-h-80 overflow-y-auto pr-1">
+                {dbEdges.map((edge, i) => (
+                  <div
+                    key={i}
+                    className="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded bg-[#141418] border border-[#222228] text-xs"
+                  >
+                    <span className="text-neutral-300 truncate">
+                      {nodes[edge.source_node]?.name || `Node ${edge.source_node}`} →{" "}
+                      {nodes[edge.destination_node]?.name || `Node ${edge.destination_node}`}
+                    </span>
+                    <span className="text-neutral-400 shrink-0">{edge.time}m</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Notification Toast */}
       {notification && (
@@ -315,9 +398,9 @@ export default function Home() {
       )}
 
       {/* 3-Panel Main Layout */}
-      <div className="flex flex-1 overflow-hidden" style={{ height: "calc(100vh - 52px)" }}>
+      <div className="flex flex-col lg:flex-row flex-1 min-h-0 overflow-visible lg:overflow-hidden lg:h-[calc(100vh-52px)]">
         {/* Left Sidebar: Controls */}
-        <aside className="w-76 border-r border-[#232328] bg-[#0e0e11] flex flex-col overflow-y-auto">
+        <aside className="w-full lg:w-76 shrink-0 border-b lg:border-b-0 lg:border-r border-[#232328] bg-[#0e0e11] flex flex-col overflow-visible lg:overflow-y-auto">
           <div className="p-3.5 flex-1">
             <RouteControls
               nodes={nodes}
@@ -330,6 +413,14 @@ export default function Home() {
               selectedDest={selectedDest}
               onSourceChange={setSelectedSource}
               onDestChange={setSelectedDest}
+              mobileSection={mobileSection}
+              mobileIntelligence={
+                <AIPanel
+                  onRouteExtracted={handleAIRoute}
+                  routeResult={result}
+                  nodes={nodes}
+                />
+              }
             />
           </div>
 
@@ -344,22 +435,22 @@ export default function Home() {
         </aside>
 
         {/* Center Canvas: Geographic Highway Map */}
-        <main className="flex-1 flex flex-col overflow-hidden bg-[#0a0a0d]">
+        <main className="w-full lg:flex-1 min-w-0 min-h-[460px] flex flex-col overflow-visible lg:overflow-hidden bg-[#0a0a0d]">
           {/* Map Header Bar */}
-          <div className="px-4 py-2.5 border-b border-[#232328] bg-[#0e0e11]/80 flex items-center justify-between">
+          <div className="px-3 sm:px-4 py-2.5 border-b border-[#232328] bg-[#0e0e11]/80 flex items-center justify-between gap-3">
             <div className="flex items-center gap-2">
               <MapIcon className="h-3.5 w-3.5 text-blue-400" />
               <span className="text-xs font-semibold uppercase tracking-wider text-neutral-200">
                 Geographic Highway Route Map
               </span>
             </div>
-            <div className="text-[11px] font-mono text-neutral-400">
+            <div className="text-[10px] sm:text-[11px] font-mono text-neutral-400 text-right shrink-0">
               {nodes.length} Districts • {displayEdges.length} Highway Segments
             </div>
           </div>
 
           {/* Interactive Map Canvas */}
-          <div className="flex-1 p-3 overflow-hidden">
+          <div className="h-[52vh] min-h-[320px] max-h-[620px] lg:h-auto lg:flex-1 p-2 sm:p-3 overflow-hidden">
             <Suspense
               fallback={
                 <div className="w-full h-full flex items-center justify-center">
@@ -383,7 +474,7 @@ export default function Home() {
 
           {/* Result Output Bar */}
           {(result || isLoading) && (
-            <div className="border-t border-[#232328] p-3.5 bg-[#0e0e11] max-h-60 overflow-y-auto">
+            <div className="border-t border-[#232328] p-3 sm:p-3.5 bg-[#0e0e11] max-h-96 lg:max-h-60 overflow-y-auto">
               {isLoading ? (
                 <div className="flex items-center gap-2.5 text-xs text-neutral-400 font-mono py-2">
                   <Spinner size="sm" />
@@ -397,7 +488,7 @@ export default function Home() {
         </main>
 
         {/* Right Panel: Intelligence & Network Matrix */}
-        <aside className="w-80 border-l border-[#232328] bg-[#0e0e11] flex flex-col overflow-hidden">
+        <aside className="hidden lg:flex w-full lg:w-80 shrink-0 min-h-[380px] lg:min-h-0 border-t lg:border-t-0 lg:border-l border-[#232328] bg-[#0e0e11] flex-col overflow-hidden">
           <div className="p-2.5 border-b border-[#232328]">
             <Tabs tabs={PANEL_TABS} active={activePanel} onChange={setActivePanel} />
           </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { Button, Input, Select, Textarea, Badge } from "./ui";
 import DistrictCombobox from "./DistrictCombobox";
 import {
@@ -49,6 +49,8 @@ export default function RouteControls({
   selectedDest,
   onSourceChange,
   onDestChange,
+  mobileIntelligence = null,
+  mobileSection = "intelligence",
 }) {
   const [optimizeFor, setOptimizeFor] = useState("time");
   const [algorithm, setAlgorithm] = useState("dijkstra");
@@ -69,6 +71,10 @@ export default function RouteControls({
   const [csvStatus, setCsvStatus] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    setSection(mobileSection === "network-data" ? "graph" : "route");
+  }, [mobileSection]);
 
   async function handleSolve() {
     onSolve &&
@@ -198,7 +204,15 @@ export default function RouteControls({
   return (
     <div className="flex flex-col gap-4">
       {/* Navigation Mode Selector */}
-      <div className="grid grid-cols-2 p-1 bg-[#141418] border border-[#232328] rounded-md">
+      <div
+        className={`grid grid-cols-2 p-1 bg-[#141418] border border-[#232328] rounded-md ${
+          mobileSection === "find-route" ||
+          mobileSection === "network-data" ||
+          mobileSection === "network-matrix"
+            ? "hidden lg:grid"
+            : ""
+        }`}
+      >
         <button
           onClick={() => setSection("route")}
           className={`flex items-center justify-center gap-1.5 py-1.5 text-xs font-medium rounded transition-all ${
@@ -208,7 +222,7 @@ export default function RouteControls({
           }`}
         >
           <Compass className="h-3.5 w-3.5" />
-          <span>Planner</span>
+          <span className="hidden lg:inline">Planner</span>
         </button>
         <button
           onClick={() => setSection("graph")}
@@ -219,12 +233,14 @@ export default function RouteControls({
           }`}
         >
           <Database className="h-3.5 w-3.5" />
-          <span>Network Data</span>
+          <span className="lg:inline hidden">Network Data</span>
         </button>
       </div>
 
       {/* ── PLANNER VIEW (USER-FACING) ─────────────────────────────────── */}
-      {section === "route" && (
+      {section === "route" &&
+        mobileSection !== "network-data" &&
+        mobileSection !== "network-matrix" && (
         <div className="space-y-4">
           <div className="space-y-3">
             <DistrictCombobox
@@ -324,56 +340,13 @@ export default function RouteControls({
             <label className="text-[11px] font-medium text-neutral-400 uppercase tracking-wider">
               Routing Algorithm
             </label>
-            <div className="space-y-1.5">
-              {ALGORITHMS.map((algo) => {
-                const isSelected = algorithm === algo.value;
-                return (
-                  <button
-                    key={algo.value}
-                    onClick={() => setAlgorithm(algo.value)}
-                    className={`w-full flex flex-col text-left px-3 py-2 rounded-md border transition-all ${
-                      isSelected
-                        ? "bg-[#1e1e24] border-neutral-500 text-neutral-100"
-                        : "bg-[#141418] border-[#24242a] text-neutral-400 hover:bg-[#18181e] hover:border-neutral-700"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between w-full">
-                      <span className="text-xs font-semibold">{algo.label}</span>
-                      {isSelected && (
-                        <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />
-                      )}
-                    </div>
-                    <span className="text-[11px] text-neutral-400 mt-0.5">{algo.desc}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Frequent Corridors */}
-          <div className="space-y-1.5">
-            <label className="text-[11px] font-medium text-neutral-400 uppercase tracking-wider">
-              Frequent Corridors
-            </label>
-            <div className="grid grid-cols-2 gap-1.5">
-              {[
-                { label: "Delhi ↔ Mumbai", src: 0, dst: 56 },
-                { label: "Srinagar ↔ Kanyakumari", src: 10, dst: 81 },
-                { label: "Porbandar ↔ Siliguri", src: 49, dst: 30 },
-                { label: "Kolkata ↔ Chennai", src: 28, dst: 76 },
-              ].map((preset) => (
-                <button
-                  key={preset.label}
-                  onClick={() => {
-                    onSourceChange(preset.src);
-                    onDestChange(preset.dst);
-                  }}
-                  className="px-2.5 py-1.5 text-[11px] rounded bg-[#16161a] hover:bg-[#202026] text-neutral-300 hover:text-white border border-[#27272e] hover:border-neutral-600 transition-colors text-left truncate"
-                >
-                  {preset.label}
-                </button>
+            <Select value={algorithm} onChange={(e) => setAlgorithm(e.target.value)}>
+              {ALGORITHMS.map((algo) => (
+                <option key={algo.value} value={algo.value}>
+                  {algo.label} — {algo.desc}
+                </option>
               ))}
-            </div>
+            </Select>
           </div>
 
           {/* Action Buttons: Compute + User-Facing Refresh Button */}
@@ -399,12 +372,24 @@ export default function RouteControls({
               Fetch Latest Network from MongoDB
             </Button>
           </div>
+
+          {mobileSection === "find-route" && (
+            <div className="lg:hidden border-t border-[#232328] pt-4">
+              {mobileIntelligence}
+            </div>
+          )}
         </div>
       )}
 
       {/* ── TOPOLOGY VIEW (ADMIN / DATA INGESTION) ────────────────────────── */}
       {section === "graph" && (
-        <div className="space-y-3.5">
+        <div>
+          {mobileSection === "intelligence" && (
+            <div className="lg:hidden">
+              {mobileIntelligence}
+            </div>
+          )}
+          <div className={`space-y-3.5 ${mobileSection === "network-data" ? "block" : "hidden lg:block"}`}>
           {/* Sub-tab: Bulk CSV Ingest vs Manual Segment */}
           <div className="grid grid-cols-2 p-1 bg-[#141418] border border-[#232328] rounded-md gap-1">
             <button
@@ -655,6 +640,7 @@ export default function RouteControls({
               )}
             </div>
           )}
+        </div>
         </div>
       )}
     </div>
