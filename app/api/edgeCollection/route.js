@@ -1,12 +1,18 @@
-"use server";
-
 import clientPromise from "@/app/lib/mongodb";
-const client = await clientPromise;
-const db_name = process.env.MONGODB_DB; // name of database imported from .env2
-const db = client.db(db_name); // object of database
+
+const getDb = async () => {
+  const client = await clientPromise;
+  return client.db(process.env.MONGODB_DB);
+};
 
 export async function POST(request) {
-  let result = await db.collection("Edges Collection").find({}).toArray();
-  console.log(result)
-  return Response.json(result);
+  try {
+    const db = await getDb();
+    const edges = await db.collection("Edges Collection").find({}).toArray();
+    // Remove MongoDB _id for clean JSON response
+    const clean = edges.map(({ _id, ...rest }) => rest);
+    return Response.json(clean);
+  } catch (err) {
+    return Response.json({ error: err.message }, { status: 500 });
+  }
 }

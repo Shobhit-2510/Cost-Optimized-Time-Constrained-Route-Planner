@@ -1,0 +1,86 @@
+id,name,state,lat,lng,fee
+0,Delhi (NCR),Delhi,28.6139,77.209,0
+1,Gurgaon / Gurugram,Haryana,28.4595,77.0266,70
+2,Noida / Greater Noida,Uttar Pradesh,28.5355,77.391,60
+3,Panipat Junction (NH-44),Haryana,29.3909,76.9635,85
+4,Ambala Interchange (NH-44),Haryana,30.3782,76.7767,95
+5,Chandigarh,Punjab/HR,30.7333,76.7794,75
+6,Ludhiana (NH-44),Punjab,30.901,75.8573,85
+7,Jalandhar (NH-44),Punjab,31.326,75.5762,75
+8,Amritsar (NH-3),Punjab,31.634,74.8723,90
+9,Jammu (NH-44),J&K,32.7266,74.857,110
+10,Srinagar (NH-44 Terminus),J&K,34.0837,74.7973,130
+11,Shimla (NH-5),Himachal,31.1048,77.1734,80
+12,Dehradun (NH-7),Uttarakhand,30.3165,78.0322,85
+13,Haridwar (NH-334),Uttarakhand,29.9457,78.1642,75
+14,Agra (Yamuna/Agra-Luck Exp),Uttar Pradesh,27.1767,78.0081,120
+15,Mathura (NH-19),Uttar Pradesh,27.4924,77.6737,85
+16,Aligarh (NH-34),Uttar Pradesh,27.8974,78.088,80
+17,Bareilly (NH-30),Uttar Pradesh,28.367,79.4304,85
+18,Kanpur (NH-19/NH-27),Uttar Pradesh,26.4499,80.3319,110
+19,Lucknow (State Capital),Uttar Pradesh,26.8467,80.9462,100
+20,Ayodhya (Purvanchal Exp),Uttar Pradesh,26.7922,82.1998,90
+21,Gorakhpur (NH-27),Uttar Pradesh,26.7606,83.3732,95
+22,Prayagraj / Allahabad (NH-19),Uttar Pradesh,25.4358,81.8463,110
+23,Varanasi / Banaras (NH-19),Uttar Pradesh,25.3176,82.9739,120
+24,Patna (NH-19/NH-31),Bihar,25.5941,85.1376,110
+25,Gaya (NH-22),Bihar,24.7914,85.0002,85
+26,Muzaffarpur (NH-27),Bihar,26.1209,85.3647,90
+27,Bhagalpur (NH-33),Bihar,25.2425,86.9842,85
+28,Kolkata (GQ Terminus),West Bengal,22.5726,88.3639,150
+29,Asansol (NH-19),West Bengal,23.6739,86.9524,95
+30,Siliguri (Chicken Neck/NH-27),West Bengal,26.7271,88.3953,120
+31,Ranchi (NH-20/NH-33),Jharkhand,23.3441,85.3096,100
+32,Jamshedpur / Tatanagar,Jharkhand,22.8046,86.2029,95
+33,Dhanbad (Coal Belt/NH-19),Jharkhand,23.7957,86.4304,90
+34,Bhubaneswar (NH-16),Odisha,20.2961,85.8245,120
+35,Cuttack (NH-16),Odisha,20.4625,85.8828,85
+36,Rourkela (Biju Exp),Odisha,22.2604,84.8536,90
+37,Guwahati (Gateway to NE),Assam,26.1445,91.7362,130
+38,Shillong (NH-6),Meghalaya,25.5788,91.8933,110
+39,Jaipur (Pink City/NH-48),Rajasthan,26.9124,75.7873,100
+40,Ajmer (NH-48),Rajasthan,26.4499,74.6399,85
+41,Udaipur (NH-48),Rajasthan,24.5854,73.7125,105
+42,Jodhpur (NH-62/NH-25),Rajasthan,26.2389,73.0243,95
+43,Bikaner (NH-11/NH-62),Rajasthan,28.0229,73.3119,90
+44,Kota (Delhi-Mumbai Exp/NH-52),Rajasthan,25.2138,75.8648,110
+45,Ahmedabad (NE-1/NH-48),Gujarat,23.0225,72.5714,130
+46,Vadodara / Baroda (NE-1),Gujarat,22.3072,73.1812,90
+47,Surat (Diamond City/NH-48),Gujarat,21.1702,72.8311,120
+48,Rajkot (NH-27),Gujarat,22.3039,70.8022,95
+49,Porbandar (NH-27 West End),Gujarat,21.6417,69.6293,100
+50,Bhopal (State Capital),Madhya Pradesh,23.2599,77.4126,100
+51,Indore (Commercial Hub/NH-47),Madhya Pradesh,22.7196,75.8577,110
+52,Gwalior (NH-44),Madhya Pradesh,26.2183,78.1828,95
+53,Jabalpur (NH-30/NH-34),Madhya Pradesh,23.1815,79.9864,95
+54,Raipur (NH-53),Chhattisgarh,21.2514,81.6296,100
+55,Bilaspur (NH-130),Chhattisgarh,22.0797,82.1409,85
+56,Mumbai (Financial Capital),Maharashtra,19.076,72.8777,180
+57,Thane / Navi Mumbai,Maharashtra,19.2183,72.9781,75
+58,Pune (Expressway Hub),Maharashtra,18.5204,73.8567,140
+59,Nashik (Samruddhi/NH-60),Maharashtra,19.9975,73.7898,110
+60,Chhatrapati Sambhajinagar,Maharashtra,19.8762,75.3433,105
+61,Nagpur (Zero Mile/NH-44),Maharashtra,21.1458,79.0882,130
+62,Kolhapur (NH-48),Maharashtra,16.705,74.2433,95
+63,Solapur (NH-65/NH-52),Maharashtra,17.6599,75.9064,90
+64,Panaji / Goa (NH-66),Goa,15.4909,73.8278,110
+65,Hyderabad (Cyberabad/NH-44),Telangana,17.385,78.4867,140
+66,Warangal (NH-163),Telangana,17.9689,79.5941,85
+67,Vijayawada (NH-16/NH-65),Andhra Pradesh,16.5062,80.648,120
+68,Visakhapatnam / Vizag (NH-16),Andhra Pradesh,17.6868,83.2185,130
+69,Tirupati (NH-71),Andhra Pradesh,13.6288,79.4192,95
+70,Kurnool (NH-44),Andhra Pradesh,15.8281,78.0373,90
+71,Bangalore (Silicon Valley),Karnataka,12.9716,77.5946,150
+72,Mysore (NH-275 Expressway),Karnataka,12.2958,76.6394,100
+73,Mangalore (Port / NH-75),Karnataka,12.9141,74.856,110
+74,Hubli — Dharwad (NH-48),Karnataka,15.3647,75.124,95
+75,Belgaum / Belagavi (NH-48),Karnataka,15.8497,74.4977,90
+76,Chennai (Auto Hub / NH-16/48),Tamil Nadu,13.0827,80.2707,140
+77,Vellore (NH-48),Tamil Nadu,12.9165,79.1325,85
+78,Salem (Transit Hub / NH-44),Tamil Nadu,11.6643,78.146,95
+79,Coimbatore (NH-544),Tamil Nadu,11.0168,76.9558,105
+80,Madurai (Temple City / NH-44),Tamil Nadu,9.9252,78.1198,100
+81,Kanyakumari (NH-44 South End),Tamil Nadu,8.0883,77.5385,110
+82,Kochi / Cochin (NH-544/66),Kerala,9.9312,76.2673,120
+83,Thiruvananthapuram (Capital),Kerala,8.5241,76.9366,110
+84,Kozhikode / Calicut (NH-66),Kerala,11.2588,75.7804,95

@@ -1,0 +1,12 @@
+source_node,destination_node,time,highway_ref,transport_type
+0,1,45,NH-48,road
+0,2,40,Yamuna-Exp,road
+0,3,90,NH-44,road
+3,4,85,NH-44,road
+4,5,45,NH-152,road
+14,19,210,Agra-Lucknow-Exp,road
+19,20,120,Purvanchal-Exp,road
+56,58,140,Mumbai-Pune-Exp,road
+58,62,230,NH-48,road
+71,72,85,Bangalore-Mysore-Exp,road
+

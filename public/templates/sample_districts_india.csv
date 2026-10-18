@@ -1,0 +1,12 @@
+id,name,state,lat,lng,fee
+100,Varanasi Junction,Uttar Pradesh,25.3176,82.9739,120
+101,Gorakhpur Hub,Uttar Pradesh,26.7606,83.3732,95
+102,Patna Central,Bihar,25.5941,85.1376,110
+103,Ranchi Interchange,Jharkhand,23.3441,85.3096,100
+104,Indore Commercial Hub,Madhya Pradesh,22.7196,75.8577,110
+105,Nagpur Zero Mile,Maharashtra,21.1458,79.0882,130
+106,Coimbatore Junction,Tamil Nadu,11.0168,76.9558,105
+107,Kochi Port City,Kerala,9.9312,76.2673,120
+108,Mysore Hub,Karnataka,12.2958,76.6394,100
+109,Amritsar Gateway,Punjab,31.6340,74.8723,90
+
