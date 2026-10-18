@@ -5,12 +5,10 @@ import { NATIONAL_HIGHWAY_NODES, NATIONAL_HIGHWAY_EDGES, DEFAULT_NATIONAL_PASSIN
 import { Tabs, Spinner, Badge } from "@/app/components/ui";
 import RouteControls from "@/app/components/RouteControls";
 import ResultPanel from "@/app/components/ResultPanel";
-import AlgorithmVisualizer from "@/app/components/AlgorithmVisualizer";
 import AIPanel from "@/app/components/AIPanel";
 import {
   Navigation,
   Map as MapIcon,
-  Activity,
   Sparkles,
   Database,
   Info,
@@ -24,7 +22,6 @@ const MapView = lazy(() => import("@/app/components/MapView"));
 
 const PANEL_TABS = [
   { id: "ai", label: "Intelligence", icon: Sparkles },
-  { id: "visualizer", label: "Execution Trace", icon: Activity },
   { id: "edges", label: "Network Matrix", icon: Database },
 ];
 
@@ -41,10 +38,6 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [loadError, setLoadError] = useState("");
 
-  // Visualizer state
-  const [vizSteps, setVizSteps] = useState([]);
-  const [vizVisited, setVizVisited] = useState([]);
-  const [currentAlgo, setCurrentAlgo] = useState("dijkstra");
 
   // UI state
   const [activePanel, setActivePanel] = useState("ai");
@@ -136,8 +129,6 @@ export default function Home() {
         }
 
         setResult({ ...data, maxTime });
-        setVizSteps(data.steps || []);
-        setActivePanel("visualizer");
 
         if (data.cost === -1) {
           showNotification("No feasible path found within the time limit", "warning");
@@ -228,16 +219,6 @@ export default function Home() {
     showNotification(`Identified: ${parsed.sourceName} → ${parsed.destName}`, "info");
   }, []);
 
-  // Handle visualizer step change
-  const handleStepChange = useCallback((stepIdx, step) => {
-    if (!step) return;
-    if (step.type === "visit") {
-      setVizVisited((prev) => {
-        if (prev.includes(step.node)) return prev;
-        return [...prev, step.node];
-      });
-    }
-  }, []);
 
   // Node click handler
   const handleNodeClick = useCallback(
@@ -387,22 +368,13 @@ export default function Home() {
           )}
         </main>
 
-        {/* Right Panel: Intelligence / Trace / Matrix */}
+        {/* Right Panel: Intelligence & Network Matrix */}
         <aside className="w-80 border-l border-[#232328] bg-[#0e0e11] flex flex-col overflow-hidden">
           <div className="p-2.5 border-b border-[#232328]">
             <Tabs tabs={PANEL_TABS} active={activePanel} onChange={setActivePanel} />
           </div>
 
           <div className="flex-1 overflow-y-auto p-3.5">
-            {activePanel === "visualizer" && (
-              <AlgorithmVisualizer
-                steps={vizSteps}
-                nodes={nodes}
-                algorithm={currentAlgo}
-                onStepChange={handleStepChange}
-              />
-            )}
-
             {activePanel === "ai" && (
               <AIPanel
                 onRouteExtracted={handleAIRoute}
