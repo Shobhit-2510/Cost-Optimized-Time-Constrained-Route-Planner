@@ -314,7 +314,7 @@ export default function Home() {
               setMobileSection("find-route");
               setMobileMenuOpen(false);
             }}
-            className="w-full rounded px-3 py-2 text-left text-xs text-neutral-300 hover:bg-[#202026]"
+            className="w-full rounded px-[0.975rem] py-[0.65rem] text-left text-[0.8125rem] text-neutral-300 hover:bg-[#202026]"
           >
             Find Route
           </button>
@@ -325,7 +325,7 @@ export default function Home() {
               setMobileSection("network-matrix");
               setMobileMenuOpen(false);
             }}
-            className="w-full rounded px-3 py-2 text-left text-xs text-neutral-300 hover:bg-[#202026]"
+            className="w-full rounded px-[0.975rem] py-[0.65rem] text-left text-[0.8125rem] text-neutral-300 hover:bg-[#202026]"
           >
             Network Matrix
           </button>
@@ -335,7 +335,7 @@ export default function Home() {
               setMobileSection("network-data");
               setMobileMenuOpen(false);
             }}
-            className="w-full rounded px-3 py-2 text-left text-xs text-neutral-300 hover:bg-[#202026]"
+            className="w-full rounded px-[0.975rem] py-[0.65rem] text-left text-[0.8125rem] text-neutral-300 hover:bg-[#202026]"
           >
             Network Data
           </button>
