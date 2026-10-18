@@ -80,7 +80,7 @@ export default function MapView({
     layersRef.current.path.forEach((l) => map.removeLayer(l));
     layersRef.current = { nodes: [], edges: [], path: [] };
 
-    const edgesToDraw = edges.length > 0 ? edges : INDIAN_CITIES_EDGES;
+    const edgesToDraw = edges.length > 0 ? edges : NATIONAL_HIGHWAY_EDGES;
 
     // Draw background highway edges
     edgesToDraw.forEach(([u, v, t, transport = "road"]) => {
@@ -93,8 +93,8 @@ export default function MapView({
         [[nodeA.lat, nodeA.lng], [nodeB.lat, nodeB.lng]],
         {
           color,
-          weight: 1.5,
-          opacity: 0.3,
+          weight: 1,
+          opacity: 0.2,
           dashArray: transport === "flight" ? "4,6" : transport === "train" ? "6,4" : null,
         }
       ).addTo(map);
@@ -135,7 +135,7 @@ export default function MapView({
 
       let fillColor = "#27272a";
       let strokeColor = "#3f3f46";
-      let radius = 5;
+      let radius = 3.5;
       let weight = 1;
 
       if (isSource) {

@@ -19,6 +19,7 @@ import {
   FileSpreadsheet,
   Download,
   RefreshCw,
+  Search,
 } from "lucide-react";
 
 const ALGORITHMS = [
@@ -67,16 +68,28 @@ export default function RouteControls({
   const [csvStatus, setCsvStatus] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef(null);
+  const [districtFilter, setDistrictFilter] = useState("");
+
+  // Filter nodes by query if provided
+  const filteredNodes = useMemo(() => {
+    if (!districtFilter.trim()) return nodes;
+    const q = districtFilter.toLowerCase().trim();
+    return nodes.filter(
+      (n) =>
+        (n.name && n.name.toLowerCase().includes(q)) ||
+        (n.state && n.state.toLowerCase().includes(q))
+    );
+  }, [nodes, districtFilter]);
 
   // Group nodes by state for clean hierarchical dropdown
   const groupedNodes = useMemo(() => {
-    return nodes.reduce((acc, node) => {
+    return filteredNodes.reduce((acc, node) => {
       const st = node.state || "National Interchanges";
       if (!acc[st]) acc[st] = [];
       acc[st].push(node);
       return acc;
     }, {});
-  }, [nodes]);
+  }, [filteredNodes]);
 
   async function handleSolve() {
     onSolve &&
@@ -129,8 +142,22 @@ export default function RouteControls({
     reader.readAsText(file);
   }
 
-  // Download sample CSV templates
-  function downloadSampleTemplate() {
+  // Download All-India CSV templates or full datasets
+  function downloadSampleTemplate(fullDataset = false) {
+    if (fullDataset) {
+      const url =
+        csvType === "nodes"
+          ? "/templates/india_all_districts_732.csv"
+          : "/templates/india_all_highways_2113.csv";
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", url.split("/").pop());
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      return;
+    }
+
     let content = "";
     let filename = "";
 
@@ -221,8 +248,31 @@ export default function RouteControls({
       {section === "route" && (
         <div className="space-y-4">
           <div className="space-y-3">
+            {/* Quick District Search Filter */}
+            <div className="relative">
+              <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-[#141418] border border-[#232328] rounded-md focus-within:border-blue-500/50 transition-colors">
+                <Search className="h-3.5 w-3.5 text-neutral-400 shrink-0" />
+                <input
+                  type="text"
+                  placeholder={`Search ${nodes.length} districts across India...`}
+                  value={districtFilter}
+                  onChange={(e) => setDistrictFilter(e.target.value)}
+                  className="w-full bg-transparent text-xs text-neutral-100 placeholder:text-neutral-500 focus:outline-none"
+                />
+                {districtFilter && (
+                  <button
+                    type="button"
+                    onClick={() => setDistrictFilter("")}
+                    className="text-[11px] text-neutral-400 hover:text-neutral-200 px-1"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+            </div>
+
             <Select
-              label="Origin City / Interchange"
+              label="Origin City / District"
               value={selectedSource ?? ""}
               onChange={(e) => onSourceChange(e.target.value === "" ? null : Number(e.target.value))}
             >
@@ -512,12 +562,22 @@ export default function RouteControls({
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={downloadSampleTemplate}
+                  onClick={() => downloadSampleTemplate(false)}
                   className="text-xs"
-                  title="Download template CSV format"
+                  title="Download sample CSV format"
                 >
                   <Download className="h-3.5 w-3.5 mr-1" />
-                  Template
+                  Sample
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => downloadSampleTemplate(true)}
+                  className="text-xs text-blue-400 border-blue-900/60 hover:bg-blue-950/30"
+                  title="Download full 732 districts / 2113 highways All-India dataset"
+                >
+                  <Download className="h-3.5 w-3.5 mr-1" />
+                  Full All-India CSV
                 </Button>
               </div>
 

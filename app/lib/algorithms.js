@@ -401,3 +401,7 @@ function haversine(a, b) {
       Math.sin(dLon / 2) ** 2;
   return R * 2 * Math.atan2(Math.sqrt(x), Math.sqrt(1 - x));
 }
+
+// Backward compatibility alias
+export const dijkstraMinCost = (n, edges, fees, maxTime) =>
+  dijkstraSolver(n, edges, fees, { optimizeFor: "cost", maxTime });

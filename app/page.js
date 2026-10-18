@@ -439,7 +439,7 @@ export default function Home() {
                   <div className="text-center py-10 text-neutral-400 text-xs space-y-1">
                     <Database className="h-6 w-6 mx-auto mb-2 opacity-40" />
                     <p className="font-medium text-neutral-400">Database collection empty</p>
-                    <p className="text-[11px] text-neutral-400">Use "Reset Indian Highway Network" to seed data.</p>
+                    <p className="text-[11px] text-neutral-400">Use &quot;Fetch Latest Network from MongoDB&quot; or upload CSV to seed data.</p>
                   </div>
                 ) : (
                   <div className="space-y-1 max-h-[580px] overflow-y-auto pr-1">

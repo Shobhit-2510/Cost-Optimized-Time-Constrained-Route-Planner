@@ -24,15 +24,26 @@ export async function POST(request) {
       maxTime = 99999,
       maxCost = 99999,
       algorithm = "dijkstra",
-      nodes = NATIONAL_HIGHWAY_NODES,
+      nodes: requestNodes,
       passingFees = [],
     } = body;
 
     let edgeList = [];
+    let activeNodes = Array.isArray(requestNodes) && requestNodes.length > 0 ? requestNodes : [];
 
     // 1. Attempt to load from MongoDB
     try {
       const db = await getDb();
+      if (activeNodes.length === 0) {
+        const rawNodes = await db.collection("Nodes Collection").find({}).toArray();
+        if (rawNodes && rawNodes.length > 0) {
+          activeNodes = rawNodes.map(({ _id, node_id, ...rest }) => ({
+            id: node_id,
+            ...rest,
+          }));
+        }
+      }
+
       const rawEdges = await db.collection("Edges Collection").find({}).toArray();
       if (rawEdges && rawEdges.length > 0) {
         edgeList = rawEdges.map((e) => [
@@ -42,24 +53,30 @@ export async function POST(request) {
         ]);
       }
     } catch (dbErr) {
-      console.warn("[/api/solve] MongoDB fetch error, falling back to static edges:", dbErr.message);
+      console.warn("[/api/solve] MongoDB fetch error:", dbErr.message);
     }
 
-    // 2. Fallback to predefined dataset if DB has no edges
+    // 2. Fallbacks if DB is empty
+    if (activeNodes.length === 0) {
+      activeNodes = NATIONAL_HIGHWAY_NODES;
+    }
     if (edgeList.length === 0) {
       edgeList = NATIONAL_HIGHWAY_EDGES;
     }
 
-    const fees = passingFees.length > 0 ? passingFees : (nodes.map((n) => n.fee) || DEFAULT_NATIONAL_PASSING_FEES);
+    const fees =
+      passingFees.length > 0
+        ? passingFees
+        : activeNodes.map((n) => n.fee) || DEFAULT_NATIONAL_PASSING_FEES;
     const nodeCount = Math.max(
-      nodes.length,
+      activeNodes.length,
       ...edgeList.flatMap(([u, v]) => [u, v]),
       0
     ) + 1;
 
     const src = Number(sourceId);
     const dst = destId !== undefined ? Number(destId) : nodeCount - 1;
-    const nodeCoords = nodes.map((n) => ({ lat: n.lat, lng: n.lng }));
+    const nodeCoords = activeNodes.map((n) => ({ lat: n.lat, lng: n.lng }));
 
     const solverOpts = {
       optimizeFor,
@@ -89,7 +106,7 @@ export async function POST(request) {
     const executionTime = Date.now() - start;
 
     // Remap path indices to node names
-    const pathNames = result.path.map((id) => (nodes[id] ? nodes[id].name : `Node ${id}`));
+    const pathNames = result.path.map((id) => (activeNodes[id] ? activeNodes[id].name : `Node ${id}`));
 
     return Response.json({
       ...result,
@@ -99,7 +116,7 @@ export async function POST(request) {
       algorithm,
       optimizeFor,
       executionTime,
-      nodeCount: nodes.length || nodeCount,
+      nodeCount: activeNodes.length || nodeCount,
       edgeCount: edgeList.length,
     });
   } catch (err) {

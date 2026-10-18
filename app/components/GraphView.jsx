@@ -76,8 +76,9 @@ export default function GraphView({
     const minLat = Math.min(...lats), maxLat = Math.max(...lats);
     const minLng = Math.min(...lngs), maxLng = Math.max(...lngs);
 
-    const CANVAS_W = 1100;
-    const CANVAS_H = 580;
+    const count = cityNodes.length;
+    const CANVAS_W = Math.max(1200, Math.round(Math.sqrt(count) * 160));
+    const CANVAS_H = Math.max(650, Math.round(Math.sqrt(count) * 120));
 
     return cityNodes.map((node) => ({
       id: String(node.id),
